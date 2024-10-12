@@ -4,7 +4,7 @@
 
 pkgname=balena-etcher
 _pkgname=etcher
-pkgver=1.19.22
+pkgver=1.19.25
 pkgrel=1
 epoch=2
 pkgdesc='Flash OS images to SD cards & USB drives, safely and easily'
@@ -27,11 +27,11 @@ source=("https://github.com/balena-io/etcher/archive/refs/tags/v${pkgver}.tar.gz
   "etcher-util"
   'skip-build-util.patch'
 )
-sha256sums=('25e218ac7af3a843db37ad0205fed6beb84afe16ec3af123e93106120594a419'
-  '6c5fb48aeb636272689c86d7cf9beea4515214636bc617a61c3e8387628b3415'
-  '7482eb18af030eb6d2b44850f23ecb99cd9198f642ac3b22b2f9f2ef0c8944d4'
-  'f27e34eaec0d2cb74fee259ff32c2cbd1dae36d2046d2b3e97394b91f47adace'
-  'a64369d70d41a3e9bed9d2260dedcaf76fceb8c654dbf8b6eee947785de2ae45')
+sha256sums=('2571d41bc23d0439019683df3352b5251638284908e1ff5a6e5761d82731d5a2'
+            '6c5fb48aeb636272689c86d7cf9beea4515214636bc617a61c3e8387628b3415'
+            '7482eb18af030eb6d2b44850f23ecb99cd9198f642ac3b22b2f9f2ef0c8944d4'
+            'f27e34eaec0d2cb74fee259ff32c2cbd1dae36d2046d2b3e97394b91f47adace'
+            'a64369d70d41a3e9bed9d2260dedcaf76fceb8c654dbf8b6eee947785de2ae45')
 prepare() {
   cd "${_pkgname}-${pkgver}"
   patch --strip=1 <${srcdir}/skip-build-util.patch
