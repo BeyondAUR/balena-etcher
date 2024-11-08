@@ -5,15 +5,15 @@
 pkgname=balena-etcher
 _pkgname=etcher
 pkgver=1.19.25
-pkgrel=1
+pkgrel=2
 epoch=2
 pkgdesc='Flash OS images to SD cards & USB drives, safely and easily'
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 _github_url='https://github.com/balena-io/etcher'
 url='https://balena.io/etcher'
-license=(Apache)
-_electron=electron30
-depends=("${_electron}" "nodejs")
+license=(Apache-2.0)
+_electron=electron33
+depends=("${_electron}" "nodejs-lts-iron")
 makedepends=("npm" "python" 'jq' 'moreutils' 'python-setuptools' 'git')
 optdepends=("libnotify: for notifications")
 conflicts=("${_pkgname}"
@@ -28,10 +28,10 @@ source=("https://github.com/balena-io/etcher/archive/refs/tags/v${pkgver}.tar.gz
   'skip-build-util.patch'
 )
 sha256sums=('2571d41bc23d0439019683df3352b5251638284908e1ff5a6e5761d82731d5a2'
-            '6c5fb48aeb636272689c86d7cf9beea4515214636bc617a61c3e8387628b3415'
-            '7482eb18af030eb6d2b44850f23ecb99cd9198f642ac3b22b2f9f2ef0c8944d4'
-            'f27e34eaec0d2cb74fee259ff32c2cbd1dae36d2046d2b3e97394b91f47adace'
-            'a64369d70d41a3e9bed9d2260dedcaf76fceb8c654dbf8b6eee947785de2ae45')
+  '6c5fb48aeb636272689c86d7cf9beea4515214636bc617a61c3e8387628b3415'
+  '7482eb18af030eb6d2b44850f23ecb99cd9198f642ac3b22b2f9f2ef0c8944d4'
+  'f27e34eaec0d2cb74fee259ff32c2cbd1dae36d2046d2b3e97394b91f47adace'
+  'a64369d70d41a3e9bed9d2260dedcaf76fceb8c654dbf8b6eee947785de2ae45')
 prepare() {
   cd "${_pkgname}-${pkgver}"
   patch --strip=1 <${srcdir}/skip-build-util.patch
@@ -58,6 +58,32 @@ build() {
   npm install --prefix . etcher-sdk ws lodash
 }
 
+__clean_modules() {
+  local __arch_remove
+  __arch_remove=arm64
+  if [[ "$CARCH" == "aarch64" ]]; then
+    __arch_remove=x64
+  fi
+  cd "${pkgdir}/usr/lib/${pkgname}/utils/node_modules"
+  rm -rf {drivelist,mountutils,xxhash-addon}/build/{config.gypi,Makefile,*.mk,Release/{obj.target,.deps,*.a}}
+  rm -rf lzma-native/prebuilds/{darwin-{arm64,x64},win32-{ia32,x64},linux-${__arch_remove}}
+  rm -rf drivelist/node-addon-api/nothing.target.mk
+  rm -rf usb/prebuilds/{android,win32,darwin}-*
+  case $CARCH in
+  x86_64)
+    rm -rf usb/prebuilds/linux-{arm*,ia32}
+    ;;
+  i386)
+    rm -rf usb/prebuilds/linux-{arm*,x64}
+    ;;
+  aarch64)
+    rm -rf usb/prebuilds/linux-{arm,x64,ia32}
+    ;;
+  armv7h)
+    rm -rf usb/prebuilds/linux-{arm64,x64,ia32,arm/node.napi.armv6.node}
+    ;;
+  esac
+}
 package() {
   cd "${_pkgname}-${pkgver}"
 
@@ -76,4 +102,5 @@ package() {
     install -Dm644 "assets/iconset/${size}.png" \
       "${pkgdir}/usr/share/icons/hicolor/${size}/apps/${pkgname}.png"
   done
+  __clean_modules
 }
