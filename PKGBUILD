@@ -11,8 +11,8 @@ arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 _github_url='https://github.com/balena-io/etcher'
 url='https://balena.io/etcher'
 license=(Apache-2.0)
-_electron=electron33
-depends=("${_electron}" "nodejs")
+_electron=electron34
+depends=("${_electron}" "nodejs-lts-jod")
 makedepends=("npm" "python" 'jq' 'moreutils' 'python-setuptools' 'git')
 optdepends=("libnotify: for notifications")
 conflicts=("${_pkgname}"
@@ -47,6 +47,7 @@ prepare() {
 build() {
   export ELECTRON_SKIP_BINARY_DOWNLOAD=1
   export HOME="${srcdir}"
+  export NODE_OPTIONS=--stack-trace-limit=50
   cd "${_pkgname}-${pkgver}"
   unset MAKEFLAGS
 
