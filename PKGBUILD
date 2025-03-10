@@ -12,8 +12,8 @@ _github_url='https://github.com/balena-io/etcher'
 url='https://balena.io/etcher'
 license=(Apache-2.0)
 _electron=electron34
-depends=("${_electron}" "nodejs-lts-jod")
-makedepends=("npm" "python" 'jq' 'moreutils' 'python-setuptools' 'git')
+depends=("${_electron}")
+makedepends=("nodejs-lts-jod" "npm" "python" 'jq' 'moreutils' 'python-setuptools' 'git')
 optdepends=("libnotify: for notifications")
 conflicts=("${_pkgname}"
   "${_pkgname}-git"
