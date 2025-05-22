@@ -4,14 +4,14 @@
 
 pkgname=balena-etcher
 _pkgname=etcher
-pkgver=2.1.0
+pkgver=2.1.2
 pkgrel=1
 pkgdesc='Flash OS images to SD cards & USB drives, safely and easily'
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 _github_url='https://github.com/balena-io/etcher'
 url='https://balena.io/etcher'
 license=(Apache-2.0)
-_electron=electron34
+_electron=electron36
 depends=("${_electron}")
 makedepends=("nodejs-lts-jod" "npm" "python" 'jq' 'moreutils' 'python-setuptools' 'git')
 optdepends=("libnotify: for notifications")
@@ -26,7 +26,7 @@ source=("https://github.com/balena-io/etcher/archive/refs/tags/v${pkgver}.tar.gz
   "etcher-util"
   'skip-build-util.patch'
 )
-sha256sums=('b5aa47fa887fd794e32101e05c0f22770e289b18ac897b560889c0caacb197be'
+sha256sums=('2fd9e1e96bda09e5ab4fd7e302531b084f0e2b8557dc1f959a1b2f2e6599d7f5'
             '6c5fb48aeb636272689c86d7cf9beea4515214636bc617a61c3e8387628b3415'
             '7482eb18af030eb6d2b44850f23ecb99cd9198f642ac3b22b2f9f2ef0c8944d4'
             'f27e34eaec0d2cb74fee259ff32c2cbd1dae36d2046d2b3e97394b91f47adace'
@@ -39,7 +39,6 @@ prepare() {
   jq ".devDependencies.electron = \"$electronVersion\"" package.json | sponge package.json
   jq ".build.electronDist = \"$electronDist\"" package.json | sponge package.json
   jq ".build.electronVersion = \"$electronVersion\"" package.json | sponge package.json
-  jq '.+= { "overrides": {"nan": "2.22.0"}}' package.json | sponge package.json
   sed -i lib/gui/etcher.ts -e "s|process.resourcesPath|'/usr/lib/${pkgname}'|"
   sed -i ${srcdir}/${pkgname} -e "s|__ELECTRON__|${_electron}|"
 }
@@ -48,6 +47,8 @@ build() {
   export ELECTRON_SKIP_BINARY_DOWNLOAD=1
   export HOME="${srcdir}"
   export NODE_OPTIONS=--stack-trace-limit=50
+
+  export npm_config_nodedir=/usr/
   cd "${_pkgname}-${pkgver}"
   unset MAKEFLAGS
 
